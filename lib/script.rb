@@ -1,11 +1,7 @@
 
-def print_grid(grid)
-  grid.each do |key, value|
-    value.each { |hole| print "|#{hole}"}
-    print "\n"
-  end
-end
+require "./lib/classes.rb"
+game = Game.new
 
-print_grid(grid)
+
 # add color
 # proper TDD
