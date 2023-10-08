@@ -33,5 +33,28 @@ describe Board do
     end
   end
 
+  describe '#column_full?' do
+    subject(:board) { described_class.new }
+    context 'when the column is full' do
+
+      it 'returns true' do
+        column = 3
+        board.instance_eval {@grid['5'][column - 1] = 'o'}
+
+        expect(board.column_full?(column)).to be true
+      end
+
+    end
+
+    context 'when the column is empty' do
+
+      it 'returns nil' do
+        column = 4
+        expect(board.column_full?(column)).to be_nil
+      end
+
+    end
+  end
+
 end
 

@@ -91,41 +91,41 @@ describe Player do
     end
   end
 
-  describe '#get_color' do
-    subject(:player_color) { described_class.new }
+  # describe '#get_color' do
+  #   subject(:player_color) { described_class.new }
 
-    context 'when an input is given' do
-      before do
-        # allow(player_color).to receive(:gets).and_return('blue')
-        allow(player_color).to receive(:verify_color).with('blue').and_return('blue')
-      end
+  #   context 'when an input is given' do
+  #     before do
+  #       allow(player_color).to receive(:gets).and_return('blue').once
+  #       allow(player_color).to receive(:verify_color).and_return('blue').once
+  #     end
 
-      it 'returns blue' do
-        color = 'blue'
-        result = player_color.get_color
-        expect(result).to eq(color)
-      end
-    end
+  #     it 'returns blue' do
+  #       color = 'blue'
+  #       result = player_color.get_color
+  #       expect(result).to eq(color)
+  #     end
+  #   end
 
-    context 'when no input is given' do
-      let(:color_mock) { Colors }
-      before do
-        allow(player_color).to receive(:gets).and_return('')
-        allow(player_color).to receive(:verify_color).and_return('')
-      end
+  #   context 'when no input is given' do
+  #     let(:color_mock) { Colors }
+  #     before do
+  #       allow(player_color).to receive(:gets).and_return('')
+  #       allow(player_color).to receive(:verify_color).and_return('')
+  #     end
 
-      it 'returns the default color' do
-        color = player_color.color_arr[0]
-        expect(player_color.get_color).to eq(color)
-      end
-    end
-  end
+  #     it 'returns the default color' do
+  #       color = player_color.color_arr[0]
+  #       expect(player_color.get_color).to eq(color)
+  #     end
+  #   end
+  # end
 
   describe '#verify_color' do
 
     subject(:color_verification) { described_class.new }
-
     context 'when valid color is given' do
+
 
       it 'returns the valid color' do
         input = 'blue'

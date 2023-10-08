@@ -16,13 +16,10 @@ end
 class Player < Colors
   @@number_of_players = 0
 
-  attr_reader :name
+  attr_reader :name, :color
   attr_accessor :number_of_players
 
   def initialize
-    # TODO: add nice message and ability to select name and color of choice
-    # @player_number = @@number_of_players + 1
-    # @availible_colors = colors
     @name = get_name
     @color = get_color
     @@number_of_players += 1
@@ -32,9 +29,6 @@ class Player < Colors
     @@number_of_players
   end
 
-  # TODO: proper verify for name and color - name: max 10 letters
-  # color: must be in arr
-  # defaults for both
   def get_name
     player_number = @@number_of_players + 1
     input = ''
@@ -55,7 +49,7 @@ class Player < Colors
   end
 
   def get_color
-    input = ''
+    input = nil
     puts "#{@name}, select a color:"
     loop do
       Colors.print_color_choices
@@ -65,8 +59,6 @@ class Player < Colors
     input == '' ? "#{@@color_arr.shift}" : "#{@@color_arr.delete(input)}"
   end
 
-  
-
   def verify_color(input)
     if @@color_arr.include?(input.downcase) || input == ''
       return input
@@ -74,7 +66,6 @@ class Player < Colors
       puts 'Color not availible. Please select a valid color.'
     end
   end
-
 
   
 end
@@ -84,12 +75,12 @@ class Board
 
   def initialize(color_one = 'yellow', color_two = 'red')
     @grid = {
-      '5': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      '4': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      '3': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      '2': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      '1': [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      '0': [' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+      '5' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      '4' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      '3' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      '2' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      '1' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
+      '0' => [' ', ' ', ' ', ' ', ' ', ' ', ' '], 
     }
     @already_placed = {
       color_one => [],
@@ -104,17 +95,70 @@ class Board
     end
   end
 
+  def column_full?(input)
+    return true unless @grid['5'][input - 1] == ' '
+  end
+
+  def drop_into(column, current_player)
+    index = column - 1
+    @grid.each do |row, row_arr|
+      if row == '0' || @grid[(row.to_i - 1).to_s][index] != ' '
+        row_arr[index] = '•'.colorize(current_player.color.to_sym)
+        return
+      end
+    end
+  end
+
 end
 
 
-
 class Game
-  attr_reader :player_one, :player_two
+  attr_reader :player_one, :player_two, :current_player
 
   def initialize
     @player_one = Player.new
     @player_two = Player.new
+    @current_player = @player_two
     @board = Board.new
   end
+
+  def play
+    @board.print_grid
+
+    loop do
+      @current_player = select_player
+
+      puts "#{@current_player.name}, enter the column number (1-7)"
+      column_num = get_coordinates
+
+      @board.drop_into(column_num.to_i, @current_player)
+      @board.print_grid
+      p @board
+    end
+  end
+
+  def select_player
+    @current_player = @current_player == @player_one ? @player_two : @player_one
+  end
+
+  def get_coordinates
+    loop do
+      input = verify_coordinates(gets.chomp)
+      return input if input
+    end
+  end
+
+  def verify_coordinates(input)
+    if input.match?(/^[1-7]$/)
+      if @board.column_full?(input.to_i)
+        puts 'This column is already full.'
+      else
+        input
+      end
+    else
+      puts 'Invalid coordinates. Please select a single number between 1 and 7'
+    end
+  end
+
 
 end
