@@ -73,7 +73,7 @@ end
 class Board
   attr_reader :grid, :already_placed
 
-  def initialize(color_one = 'yellow', color_two = 'red')
+  def initialize(player_one, player_two)
     @grid = {
       '5' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
       '4' => [' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -83,8 +83,8 @@ class Board
       '0' => [' ', ' ', ' ', ' ', ' ', ' ', ' '], 
     }
     @already_placed = {
-      color_one => [],
-      color_two => []
+      player_one => [],
+      player_two => []
     }
   end
 
@@ -104,10 +104,20 @@ class Board
     @grid.each do |row, row_arr|
       if row == '0' || @grid[(row.to_i - 1).to_s][index] != ' '
         row_arr[index] = '•'.colorize(current_player.color.to_sym)
+        @already_placed[current_player.name] << [row, index]
         return
       end
     end
   end
+
+  def win?(current_player)
+    placed = @already_placed[current_player.name]
+    return nil
+  end
+
+  def tie?
+  end
+
 
 end
 
@@ -119,7 +129,7 @@ class Game
     @player_one = Player.new
     @player_two = Player.new
     @current_player = @player_two
-    @board = Board.new
+    @board = Board.new(@player_one.name, @player_two.name)
   end
 
   def play
@@ -133,7 +143,8 @@ class Game
 
       @board.drop_into(column_num.to_i, @current_player)
       @board.print_grid
-      p @board
+      break if @board.win?(current_player)
+      break if @board.tie?
     end
   end
 

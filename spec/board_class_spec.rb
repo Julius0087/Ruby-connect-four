@@ -1,4 +1,5 @@
 require "./lib/classes.rb"
+require 'colorize'
 
 describe Board do
   describe '#initialize' do
@@ -53,6 +54,21 @@ describe Board do
         expect(board.column_full?(column)).to be_nil
       end
 
+    end
+  end
+
+  describe '#drop_into' do
+    subject(:board_drop) { described_class.new }
+    context 'when a player drops the ball' do
+
+      it 'updates the @grid' do
+        player = double('player', color: 'yellow')
+        column = 3
+        board_drop.instance_eval {@grid['0'][column - 1] = 'o'}
+
+        board_drop.drop_into(column, player)
+        expect(board_drop.grid['1'][column - 1]).to eq("\e[0;33;49m•\e[0m")
+      end
     end
   end
 
