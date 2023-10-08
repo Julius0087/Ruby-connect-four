@@ -111,13 +111,55 @@ class Board
   end
 
   def win?(current_player)
-    placed = @already_placed[current_player.name]
-    return nil
+    placed_arr = @already_placed[current_player.name]
+    last_placed = placed_arr.last
+
+    if win_horizontal(placed_arr, last_placed)
+      # ||
+      # win_vertical?(current_player) ||
+      # win_diagonal?(current_player)
+
+      puts 'winning message'
+      return true
+    end
   end
 
   def tie?
   end
 
+
+  private
+
+  def win_horizontal(placed_arr, node)
+    left_count = win_horizontal_left(placed_arr, node)
+    right_count = win_horizontal_right(placed_arr, node)
+
+    return true if left_count + right_count >= 3
+  end
+
+  def win_horizontal_left(placed_arr, node, count = 0)
+    if index = placed_arr.index([node[0], node[1] - 1])
+      count += 1
+      count = win_horizontal_left(placed_arr, placed_arr[index], count)
+    end
+
+    count
+  end
+
+  def win_horizontal_right(placed_arr, node, count = 0)
+    if index = placed_arr.index([node[0], node[1] + 1])
+      count += 1
+      count = win_horizontal_right(placed_arr, placed_arr[index], count)
+    end
+
+    count
+  end
+
+  def win_vertical(current_player)
+  end
+
+  def win_diagonal(current_player)
+  end
 
 end
 
