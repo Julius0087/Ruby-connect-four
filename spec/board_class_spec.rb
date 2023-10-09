@@ -106,6 +106,56 @@ describe Board do
         board_win.win?(player_one)
       end
     end
+
+    context 'when the win is vertical' do
+
+      it 'returns true when winning left-bottom to right-top' do
+        player_one = double('player_one', name: 'Bob')
+        winning_arr = [['0', 0], ['1', 1], ['2', 2], ['3', 3]]
+        board_win.instance_eval {@already_placed['Bob'] = winning_arr}
+
+        result = board_win.win?(player_one)
+        expect(result).to be true
+      end
+
+      it 'returns true when winning right-bottom to left-top' do
+        player_one = double('player_one', name: 'Bob')
+        winning_arr = [['3', 0], ['2', 1], ['1', 2], ['0', 3]]
+        board_win.instance_eval {@already_placed['Bob'] = winning_arr}
+
+        result = board_win.win?(player_one)
+        expect(result).to be true
+      end
+    end
+
+    context 'when multiple winning conditions are present' do
+
+      it 'returns true when winning horizontal and vertical' do
+        player_one = double('player_one', name: 'Bob')
+        winning_arr = [['3', 0], ['3', 1], ['3', 2], ['0', 3], ['1', 3], ['2', 3], ['3', 3]]
+        board_win.instance_eval {@already_placed['Bob'] = winning_arr}
+  
+        result = board_win.win?(player_one)
+        expect(result).to be true
+      end
+    end
   end
 
+  describe '#tie?' do
+    subject(:board_tie) { described_class.new('Bob', 'John') }
+
+    context 'when the amount of moves is up' do
+      
+      it 'returns true' do
+        player_one_arr = Array (1..42)
+        player_two_arr = Array (1..42)
+
+        board_tie.instance_eval {@already_placed['Bob'] = player_one_arr}
+        board_tie.instance_eval {@already_placed['John'] = player_two_arr}
+
+        result = board_tie.tie?
+        expect(result).to be true
+      end
+    end
+  end
 end
