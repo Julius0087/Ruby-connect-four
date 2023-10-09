@@ -4,9 +4,8 @@ require 'colorize'
 describe Board do
   describe '#initialize' do
 
-    
     context 'when a new board is created with default values' do
-      subject(:board_init) { described_class.new }
+      subject(:board_init) { described_class.new('John', 'Bob') }
 
       it 'creates a grid' do
         expect(board_init.grid).to_not be_nil
@@ -16,26 +15,14 @@ describe Board do
         expect(board_init.already_placed).to be_a(Hash)
       end
 
-      it 'the hash keys correspond to the colors' do
-        expect(board_init.already_placed.keys).to eq(['yellow', 'red'])
-      end
-    end
-
-    context 'when a new board is created with specified values' do
-      subject(:board_init_custom) { described_class.new('blue', 'orange') }
-
-      it 'creates a hash of already placed' do
-        expect(board_init_custom.already_placed).to be_a(Hash)
-      end
-
-      it 'the hash keys correspond to the colors' do
-        expect(board_init_custom.already_placed.keys).to eq(['blue', 'orange'])
+      it 'the hash keys correspond to the player names' do
+        expect(board_init.already_placed.keys).to eq(['John', 'Bob'])
       end
     end
   end
 
   describe '#column_full?' do
-    subject(:board) { described_class.new }
+    subject(:board) { described_class.new('Sarah', 'Tom') }
     context 'when the column is full' do
 
       it 'returns true' do
@@ -58,11 +45,11 @@ describe Board do
   end
 
   describe '#drop_into' do
-    subject(:board_drop) { described_class.new }
+    subject(:board_drop) { described_class.new('Bill', 'Billie') }
     context 'when a player drops the ball' do
 
       it 'updates the @grid' do
-        player = double('player', color: 'yellow')
+        player = double('player', color: 'yellow', name: 'Bill')
         column = 3
         board_drop.instance_eval {@grid['0'][column - 1] = 'o'}
 
@@ -72,5 +59,53 @@ describe Board do
     end
   end
 
-end
+  describe '#win?' do
+    subject(:board_win) { described_class.new('John', 'Charlie') }
 
+    context 'when the win is horizontal' do
+      
+
+      it 'returns true' do
+        player_one = double('player_one', name: 'John')
+        winning_arr = [['0', 2], ['0', 3], ['0', 4], ['0', 5]]
+        board_win.instance_eval {@already_placed['John'] = winning_arr}
+
+        result = board_win.win?(player_one)
+        expect(result).to be true
+      end
+
+      it 'prints the winning message' do
+        player_one = double('player_one', name: 'John')
+        winning_arr = [['0', 2], ['0', 3], ['0', 4], ['0', 5]]
+        board_win.instance_eval {@already_placed['John'] = winning_arr}
+
+        winning_message = 'John wins the game!'
+        expect(board_win).to receive(:puts).with(winning_message).once
+        board_win.win?(player_one)
+      end
+    end
+
+    context 'when the win is vertical' do
+
+      it 'returns true' do
+        player_one = double('player_one', name: 'Bob')
+        winning_arr = [['1', 2], ['2', 2], ['3', 2], ['4', 2]]
+        board_win.instance_eval {@already_placed['Bob'] = winning_arr}
+
+        result = board_win.win?(player_one)
+        expect(result).to be true
+      end
+
+      it 'prints the winning message' do
+        player_one = double('player_one', name: 'Bob')
+        winning_arr = [['1', 2], ['2', 2], ['3', 2], ['4', 2]]
+        board_win.instance_eval {@already_placed['Bob'] = winning_arr}
+
+        winning_message = 'Bob wins the game!'
+        expect(board_win).to receive(:puts).with(winning_message).once
+        board_win.win?(player_one)
+      end
+    end
+  end
+
+end
